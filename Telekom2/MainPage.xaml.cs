@@ -32,10 +32,7 @@ namespace Telekom2 {
         // Constructor
         public MainPage() {
             InitializeComponent();
-            TextBlock txt = new TextBlock();
-            txt.Text = "Hue";
-            txt.FontSize = 14.0;
-            Codes.Children.Add(txt);
+            
 
             PobierzSrednie();
         }
@@ -76,6 +73,14 @@ namespace Telekom2 {
         private void CzytajXML() {
             srednie.LoadXml(stringKursSredni);
             ks.LoadXml(stringKursKupnaSprzedazy);
+
+            InterpretAverage();
+            InterpretSB();
+
+            PrintExchange();
+        }
+
+        private void InterpretAverage() {
             var avRoots = srednie.GetElementsByTagName("tabela_kursow");
             var avKursy = avRoots[0].ChildNodes;
 
@@ -86,7 +91,7 @@ namespace Telekom2 {
                 if (n.HasChildNodes()) {
                     var w = n.SelectSingleNode("kod_waluty");
                     if (w != null) {
-                        
+
                         kod = w.InnerText;
                         Debug.WriteLine(kod);
                     }
@@ -103,23 +108,72 @@ namespace Telekom2 {
                 if (kod != null && kurs != 0)
                     dane.Add(kod, new ExchangeInfo(kurs));
             }
+
         }
 
-        // Sample code for building a localized ApplicationBar
-        //private void BuildLocalizedApplicationBar()
-        //{
-        //    // Set the page's ApplicationBar to a new instance of ApplicationBar.
-        //    ApplicationBar = new ApplicationBar();
+        private void InterpretSB() {
+            var ksRoots = ks.GetElementsByTagName("tabela_kursow");
+            var ksKursy = ksRoots[0].ChildNodes;
 
-        //    // Create a new button and set the text value to the localized string from AppResources.
-        //    ApplicationBarIconButton appBarButton = new ApplicationBarIconButton(new Uri("/Assets/AppBar/appbar.add.rest.png", UriKind.Relative));
-        //    appBarButton.Text = AppResources.AppBarButtonText;
-        //    ApplicationBar.Buttons.Add(appBarButton);
+            foreach (var n in ksKursy) {
+                //Debug.WriteLine(n.GetXml() + " DOTDOT");
+                string kod = null;
+                double kursS = 0;
+                double kursB = 0;
+                if (n.HasChildNodes()) {
+                    var w = n.SelectSingleNode("kod_waluty");
+                    if (w != null) {
 
-        //    // Create a new menu item with the localized string from AppResources.
-        //    ApplicationBarMenuItem appBarMenuItem = new ApplicationBarMenuItem(AppResources.AppBarMenuItemText);
-        //    ApplicationBar.MenuItems.Add(appBarMenuItem);
-        //}
+                        kod = w.InnerText;
+                        Debug.WriteLine(kod);
+                    }
 
+                    var k = n.SelectSingleNode("kurs_sprzedazy");
+                    if (k != null) {
+                        kursS = double.Parse(k.InnerText);
+                        Debug.WriteLine(kursS);
+                    }
+
+                    var kk = n.SelectSingleNode("kurs_kupna");
+                    if (kk != null) {
+                        kursB = double.Parse(kk.InnerText);
+                        Debug.WriteLine(kursB);
+                    }
+
+
+                }
+
+                if (kod != null && dane[kod] != null && kursS != 0 && kursB != 0) {
+                    dane[kod].Buy = kursB;
+                    dane[kod].Sell = kursS;
+                }
+            }
+        }
+
+        public void PrintExchange() {
+            double fontSize = 15.0;
+            foreach (var i in dane) {
+                TextBlock kod = new TextBlock();
+                kod.Text = i.Key;
+                kod.FontSize = fontSize;
+                Codes.Children.Add(kod);
+
+                TextBlock sell = new TextBlock();
+                sell.Text = (i.Value.Sell == 0) ? "-" : i.Value.Sell.ToString("#0.0000");
+                sell.FontSize = fontSize;
+                Sell.Children.Add(sell);
+
+                TextBlock buy = new TextBlock();
+                buy.Text = (i.Value.Buy == 0) ? "-" : i.Value.Buy.ToString("#0.0000");
+                buy.FontSize = fontSize;
+                Buy.Children.Add(buy);
+
+                TextBlock av = new TextBlock();
+                av.Text = i.Value.Average.ToString("#0.0000");
+                av.FontSize = fontSize;
+                Average.Children.Add(av);
+            }
+            
+        }
     }
 }
