@@ -9,9 +9,12 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Telekom2.Resources;
 using System.Xml;
+using System.Xml.Linq;
 using System.Net;
 using Windows.Data.Xml.Dom;
 using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Telekom2 {
     public partial class MainPage : PhoneApplicationPage {
@@ -23,7 +26,6 @@ namespace Telekom2 {
 
         Uri adresSredni = new Uri("http://www.nbp.pl/kursy/xml/a082z150429.xml");
         Uri adresKS = new Uri("http://www.nbp.pl/kursy/xml/c082z150429.xml");
-
         string stringKursSredni;
         string stringKursKupnaSprzedazy;
 
@@ -48,7 +50,7 @@ namespace Telekom2 {
             if (!e.Cancelled && e.Error == null) {
                 stringKursSredni = (string)e.Result;
 
-                Debug.WriteLine(stringKursSredni);
+                //Debug.WriteLine(stringKursSredni);
 
                 PobierzKS();
             }
@@ -57,6 +59,8 @@ namespace Telekom2 {
         public void PobierzKS() {
             wc = new WebClient();
             wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ZapiszKS);
+            
+            
             wc.DownloadStringAsync(adresKS);
         }
 
@@ -64,7 +68,7 @@ namespace Telekom2 {
             if (!e.Cancelled && e.Error == null) {
                 stringKursKupnaSprzedazy = (string)e.Result;
 
-                Debug.WriteLine(stringKursKupnaSprzedazy);
+                //Debug.WriteLine(stringKursKupnaSprzedazy);
                 CzytajXML();
             }
         }
@@ -74,7 +78,31 @@ namespace Telekom2 {
             ks.LoadXml(stringKursKupnaSprzedazy);
             var avRoots = srednie.GetElementsByTagName("tabela_kursow");
             var avKursy = avRoots[0].ChildNodes;
-            
+
+            foreach (var n in avKursy) {
+                //Debug.WriteLine(n.GetXml() + " DOTDOT");
+                string kod = null;
+                double kurs = 0;
+                if (n.HasChildNodes()) {
+                    var w = n.SelectSingleNode("kod_waluty");
+                    if (w != null) {
+                        
+                        kod = w.InnerText;
+                        Debug.WriteLine(kod);
+                    }
+
+                    var k = n.SelectSingleNode("kurs_sredni");
+                    if (k != null) {
+                        kurs = double.Parse(k.InnerText);
+                        Debug.WriteLine(kurs);
+                    }
+
+
+                }
+
+                if (kod != null && kurs != 0)
+                    dane.Add(kod, new ExchangeInfo(kurs));
+            }
         }
 
         // Sample code for building a localized ApplicationBar
@@ -92,5 +120,6 @@ namespace Telekom2 {
         //    ApplicationBarMenuItem appBarMenuItem = new ApplicationBarMenuItem(AppResources.AppBarMenuItemText);
         //    ApplicationBar.MenuItems.Add(appBarMenuItem);
         //}
+
     }
 }
