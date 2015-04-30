@@ -24,20 +24,20 @@ namespace Telekom2 {
 
         WebClient wc;
 
-        Uri adresSredni = new Uri("http://www.nbp.pl/kursy/xml/a082z150429.xml");
-        Uri adresKS = new Uri("http://www.nbp.pl/kursy/xml/c082z150429.xml");
+        //dodajemy losowy string do konca adresu pobierania, aby pominac cachowanie URL.
+        Uri adresSredni = new Uri("http://www.nbp.pl/kursy/xml/a082z150429.xml" + "?r=" + Guid.NewGuid().ToString()); 
+        Uri adresKS = new Uri("http://www.nbp.pl/kursy/xml/c082z150429.xml" + "?r=" + Guid.NewGuid().ToString());
         string stringKursSredni;
         string stringKursKupnaSprzedazy;
 
         // Constructor
         public MainPage() {
             InitializeComponent();
-            
-
             PobierzSrednie();
         }
 
         public void PobierzSrednie() {
+            Status.Text = "Pobieranie kursów średnich...";
             wc = new WebClient();
             wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ZapiszSrednie);
             wc.DownloadStringAsync(adresSredni);
@@ -54,6 +54,7 @@ namespace Telekom2 {
         }
 
         public void PobierzKS() {
+            Status.Text = "Pobieranie kursów kupna/sprzedaży...";
             wc = new WebClient();
             wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ZapiszKS);
             
@@ -71,6 +72,7 @@ namespace Telekom2 {
         }
 
         private void CzytajXML() {
+            Status.Text = "Odczytywanie danych XML...";
             srednie.LoadXml(stringKursSredni);
             ks.LoadXml(stringKursKupnaSprzedazy);
 
@@ -151,6 +153,7 @@ namespace Telekom2 {
         }
 
         public void PrintExchange() {
+            Status.Text = "Wypisywanie danych...";
             double fontSize = 15.0;
             foreach (var i in dane) {
                 TextBlock kod = new TextBlock();
@@ -173,7 +176,7 @@ namespace Telekom2 {
                 av.FontSize = fontSize;
                 Average.Children.Add(av);
             }
-            
+            Status.Text = "GOTOWE";
         }
     }
 }

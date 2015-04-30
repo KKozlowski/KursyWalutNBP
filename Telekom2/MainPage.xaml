@@ -44,27 +44,28 @@
             <TextBlock Text="TELEKOMUNIKACJA, ZADANIE 5" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,0"/>
             <TextBlock Text="kursy walut" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
-        <ScrollViewer Margin="0,0,12,10" Grid.Row="1">
-            <Grid x:Name="ContentPanel" Height="800" Width="456">
-                <StackPanel x:Name="Codes" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="100" Margin="0,0,0,-248">
+        <ScrollViewer Margin="0,138,12,42" Grid.RowSpan="2">
+            <Grid x:Name="ContentPanel" Height="800" Width="456" RenderTransformOrigin="0.658,0.499">
+                <StackPanel x:Name="Codes" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="100" Margin="11,0,0,-55">
                     <TextBlock TextWrapping="Wrap" Text="Kod" FontSize="14"/>
                 </StackPanel>
-                <StackPanel x:Name="Sell" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="110" Margin="100,0,0,-248">
+                <StackPanel x:Name="Sell" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="110" Margin="111,0,0,-55">
                     <TextBlock TextWrapping="Wrap" Margin="0,0,10,0" FontSize="14">
         				<Run Text="Cena "/>
         				<Run Text="sprz"/>
         				<Run Text="."/>
                     </TextBlock>
                 </StackPanel>
-                <StackPanel x:Name="Buy" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="110" Margin="210,0,0,-248">
+                <StackPanel x:Name="Buy" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="110" Margin="221,0,0,-55">
                     <TextBlock TextWrapping="Wrap" Text="Cena kup." Margin="0,0,10,0" FontSize="14"/>
                 </StackPanel>
-                <StackPanel x:Name="Average" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="110" Margin="325,0,0,-248">
+                <StackPanel x:Name="Average" HorizontalAlignment="Left" Height="855" VerticalAlignment="Top" Width="110" Margin="336,0,0,-55">
                     <TextBlock TextWrapping="Wrap" Text="Cena śr." Margin="0,0,10,0" FontSize="14"/>
                 </StackPanel>
 
             </Grid>
         </ScrollViewer>
+        <TextBlock x:Name="Status" Text="STATUS" Style="{StaticResource PhoneTextNormalStyle}" Margin="24,570,12,10" Grid.Row="1"/>
 
         <!--ContentPanel - place additional content here-->
 
